@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const Usuario = require('../models/usuario'); //Estándar capitalizado
+const { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticacion');
 const app = express();
 const bodyParser = require('body-parser');
 
@@ -11,7 +12,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //parse application/json
 app.use(bodyParser.json());
 
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificaToken, (req, res) => {
+
+    // return res.json({
+    //     usuario: req.usuario,
+    //     nombre: req.usuario.nombre,
+    //     email: req.usuario.email
+    // });
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
@@ -42,7 +49,7 @@ app.get('/usuario', function(req, res) {
     });
 });
 
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let body = req.body;
 
@@ -68,7 +75,7 @@ app.post('/usuario', function(req, res) {
     });
 });
 
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -89,7 +96,7 @@ app.put('/usuario/:id', function(req, res) {
     });
 });
 
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
 
