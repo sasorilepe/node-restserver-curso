@@ -12,13 +12,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 //parse application/json
 app.use(bodyParser.json());
 
+// ============================
+// Mostrar todos los usuarios
+// ============================
 app.get('/usuario', verificaToken, (req, res) => {
-
-    // return res.json({
-    //     usuario: req.usuario,
-    //     nombre: req.usuario.nombre,
-    //     email: req.usuario.email
-    // });
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
@@ -49,6 +46,9 @@ app.get('/usuario', verificaToken, (req, res) => {
     });
 });
 
+// ============================
+// Crear nuevo usuario
+// ============================
 app.post('/usuario', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let body = req.body;
@@ -75,6 +75,9 @@ app.post('/usuario', [verificaToken, verificaAdmin_Role], function(req, res) {
     });
 });
 
+// ============================
+// Actualizar usuario
+// ============================
 app.put('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
@@ -96,11 +99,12 @@ app.put('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) 
     });
 });
 
+// ============================
+// Eliminar usuario
+// ============================
 app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], function(req, res) {
 
     let id = req.params.id;
-
-    //Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
 
     Usuario.findByIdAndUpdate(id, { estado: false }, { new: true }, (err, usuarioBorrado) => {
 
